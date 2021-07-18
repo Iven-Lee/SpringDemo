@@ -1,0 +1,68 @@
+什么是Spring，Spring的核心技术
+------1Spring是容器，用于创建与管理对象（解耦合）
+------2核心技术：IOC（控制反转）与AOP（面向切面编程）
+对Spring核心技术的理解
+------1 IOC（控制反转）：
+            IOC是一种理论与思想，由容器代替开发人员完成对象的管理，
+            IOC技术实现使用依赖注入（DI），底层是反射机制。
+------2 AOP（面向切面编程）：
+            AOP是动态代理的规范化，使用AOP要求在分析项目功能时，找出切面（@aspect），
+            并合理安排切面的执行时间与执行位置。（运用切入点表达式）
+Spring中DI（依赖注入）的实现方式
+------1基于XML的DI实现：
+            在Spring的配置文件中使用<bean>完成属性（set注入与构造注入）赋值。
+------2基于注解的DI实现：
+            在Spring的类上使用注解（@Component），完成属性（@Value与@Autowired）赋值。
+Spring中@Component、@Repository、@Service与@Controller的区别
+------@Component、@Repository、@Service与@Controller使用的语法一致，都能够创建对象，但后三个还有额外的功能：
+------1@Repository（用于数据访问层即持久层，表示创建DAO对象，能访问数据库）
+------2@Service（用于业务逻辑层，表示创建Service对象，做业务、事务处理等）
+------3@Controller（用于界面层即控制层，表示创建控制器对象，接收请求，返回响应）
+Spring框架中提供事务的处理方案
+    事务要求同时成功，同时失败（提交事务commit，回滚事务rollback）
+------1 注解方案（小项目）：
+            Spring框架中使用AOP的环绕机制，利用@Transactional注解增加事务功能。
+------2 XML配置文件方案（大项目）：
+            使用aspectj框架功能，在Spring配置文件声明事务（管理器对象与类型），实现业务与事务完全分离。
+
+
+
+由spring创建对象
+ 实现步骤：
+    1.创建maven项目
+    2.加入maven的依赖
+      spring的依赖，版本5.2.5版本
+      junit依赖
+    3.创建类（接口和他的实现类）（com.Iven.Dao、com.Iven.SetDI）
+      和没有使用框架一样， 就是普通的类。
+    4.创建spring需要使用的配置文件（SpringBeans.xml）
+      声明类的信息，这些类由spring创建和管理
+    5.测试spring创建的。（AppTest.java）
+
+
+
+基于IOC的XML知识体系：
+1、demo01
+     * spring默认创建对象的时间：在创建spring的容器时，会创建配置文件中的所有的对象。
+     * spring创建对象：默认调用的是无参数构造方法
+     * 底层：反射机制
+     * 基于XML<bean>标签
+     * 对应包com.Iven.Dao
+     * <bean>标签SpringBeans.xml
+2、demo02
+     * 基于XML<bean>标签完成属性set注入（简单类型与引用类型）
+     * 对应包com.Iven.SetDI
+     * <bean>标签SpringBeans.xml
+3、demo03
+     * 基于XML<bean>标签完成属性构造注入（spring调用有参构造）
+     * 对应包com.Iven.SetDI
+     * <bean>标签SpringBeans.xml
+4、引用类型的自动注入：
+    spring框架根据某些规则可以给引用类型赋值，使用的规则常用的是byName, byType.
+5、采用SpringAll.xml总配置文件
+     可直接调用此配置： String config="SpringAll.xml";
+     语法：<import resource="其他配置文件的路径" />
+       多配置文件的分配方式：
+       1. 按功能模块，一个模块一个配置文件
+       2. 按类的功能，数据库相关的配置一个文件配置文件， 做事务的功能一个配置文件，做service功能的一个配置文件等
+

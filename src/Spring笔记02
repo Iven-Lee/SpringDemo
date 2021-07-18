@@ -1,0 +1,46 @@
+通过spring的注解完成java对象的创建，属性赋值。代替xml文件
+
+实现步骤：
+1.加入依赖
+    spring的依赖，版本5.2.5版本
+    ----spring-context ，在你加入spring-context的同时， 间接加入spring-aop的依赖。
+    ----使用注解必须使用spring-aop依赖
+    junit依赖
+2.创建类，在类中加入注解（com.Iven.ComponetDi）
+    ----@Component：创建对象
+	----@Respotory：用于数据访问层即持久层，表示创建DAO对象，能访问数据库
+	----@Service：用于业务逻辑层，表示创建Service对象，做业务、事务处理等
+	----@Controller：用于界面层即控制层，表示创建控制器对象，接收请求，返回响应
+	----@Value：简单类型属性注入
+	----@Autowired：引用类型的属性注入
+	----@Resource：默认是按名称注入。使用该注解，要求JDK必须是6及以上版本
+	                带参数--byName注入引用类型属性
+	                不带参数--byType注入引用类型属性
+3.创建spring的配置文件
+  声明组件扫描器component-scan的标签，指名注解在项目中的位置。
+        <context:component-scan base-package="com.Iven.ComponetDi" />
+4.使用注解创建对象， 创建容器ApplicationContext
+
+
+
+基于IOC的注解知识体系：
+1、demo04
+       * 基于注解的DI实现
+       * 基本数据类型@Value、引用数据类型@Autowired
+       * 对应包com.Iven.ComponetDi
+       * 注解配置文件：ComponetDi/applicationContext.xml
+       * 属性配置文件ComponetDi/test.properties属性配置文件
+       * 组件扫描器<component-scan>的标签，指名注解在项目中的位置
+       * 属性配置文件标签：<context:property-placeholder location="" />
+       */
+2、引用类型注入方式
+  * 方法一（自动注入）
+     * 默认使用的是byType自动注入
+     * @Override
+  * 方法二
+     * 使用byName方式（com.Iven.ComponetDi.SchoolDemo）
+     * @Override
+     * @Qualifier("schoolD")
+  * 方法三
+     * 默认是byName： 先使用byName自动注入，如果byName赋值失败，再使用byType
+     * @Resource

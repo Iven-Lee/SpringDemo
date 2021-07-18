@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--基于XML的DI实现：在Spring的配置文件中使用<bean>完成属性（set注入与构造注入）赋值-->
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+
+ <!--demo01-->
+    <!--告诉spring创建对象
+            声明bean ， 就是告诉spring要创建某个类的对象
+            id:对象的自定义名称，唯一值。 spring通过这个名称找到对象
+            class:类的全限定名称（不能是接口，因为spring是反射机制创建对象，必须使用类）
+
+            spring使用<bean>标签完成
+             ServiceInterface someService = new ServiceInterfaceImpl();
+            spring是把创建好的对象放入到map中， spring框架有一个map存放对象的。
+               springMap.put(id的值， 对象）；
+               例如 springMap.put("someService", new ServiceInterfaceImpl());
+
+            一个bean标签声明一个对象。
+      -->
+    <bean id="someService" class="com.Iven.Dao.ServiceInterfaceImpl" />
+
+
+<!--demo02-->
+    <!--声明student对象
+            注入：就是赋值的意思
+            简单类型： spring中规定java的基本数据类型和String都是简单类型。
+            di:给属性赋值
+            1. set注入（设值注入） ：spring调用类的set方法， 你可以在set方法中完成属性赋值
+                 1）简单类型的set注入
+                    <bean id="xx" class="yyy">
+                       <property name="属性名字" value="此属性的值"/>
+                       一个property只能给一个属性赋值
+                       <property....>
+                    </bean>
+
+                 2) 引用类型的set注入 ： spring调用类的set方法
+                   <bean id="xxx" class="yyy">
+                      <property name="属性名称" ref="bean的id(对象的名称)" />
+                   </bean>
+        -->
+    <bean id="myStudent" class="com.Iven.SetDI.SetDi" >
+        <!--基本类型-->
+        <property name="name" value="Iven" /><!--setName("Iven")-->
+        <property name="age" value="22" /><!--setAge(22)-->
+        <!--引用类型-->
+        <property name="school" ref="mySchool" /><!--setSchool(mySchool)-->
+    </bean>
+
+    <!--声明School对象-->
+    <bean id="mySchool" class="com.Iven.SetDI.School">
+        <property name="name" value="北京大学"/>
+        <property name="address" value="北京的海淀区" />
+    </bean>
+
+
+<!--demo03-->
+    <!--声明SetDi对象
+        构造注入：spring调用类有参数构造方法，在创建对象的同时，在构造方法中给属性赋值。
+          构造注入使用 <constructor-arg> 标签
+          <constructor-arg> 标签：一个<constructor-arg>表示构造方法一个参数。
+          <constructor-arg> 标签属性：
+             name:表示构造方法的形参名
+             index:表示构造方法的参数的位置，参数从左往右位置是 0 ， 1 ，2的顺序
+             value：构造方法的形参类型是简单类型的，使用value
+             ref：构造方法的形参类型是引用类型的，使用ref
+    -->
+    <!--
+        使用index属性
+        <bean id="myStudent2" class="com.Iven.SetDI.SetDi">
+            <constructor-arg index="0" value="Iven" />
+            <constructor-arg index="1" value="22" />
+            <constructor-arg index="2" ref="mySchool" />
+        </bean>
+
+        省略index
+        <bean id="myStudent3" class="com.Iven.SetDI.SetDi">
+            <constructor-arg  value="Iven" />
+            <constructor-arg  value="22" />
+            <constructor-arg  ref="mySchool" />
+        </bean>
+     -->
+    <!--
+       对于引用类型属性的注入，也可不在配置文件中显示的注入。可以通过为<bean/>标签
+    设置 autowire 属性值，为引用类型属性进行隐式自动注入（默认是不自动注入引用类型属性）。
+    根据自动注入判断标准的不同，可以分为两种：
+      1.byName(按名称注入) ： java类中引用类型的属性名和spring容器中（配置文件）<bean>的id名称一样，
+                              且数据类型是一致的，这样的容器中的bean，spring能够赋值给引用类型。
+             语法：
+             <bean id="xx" class="yyy" autowire="byName">
+                简单类型属性赋值
+             </bean>
+            例<bean id="setDi" class="com.Iven.SetDI.SetDi"  autowire="byName">
+      2.byType(按类型注入) ： java类中引用类型的数据类型和spring容器中（配置文件）<bean>的class属性
+                              是同源关系的，这样的bean能够赋值给引用类型
+               同源就是一类的意思：
+              1.java类中引用类型的数据类型和bean的class的值是一样的。
+              2.java类中引用类型的数据类型和bean的class的值父子类关系的。
+              3.java类中引用类型的数据类型和bean的class的值接口和实现类关系的
+           语法：
+             <bean id="xx" class="yyy" autowire="byType">
+                简单类型属性赋值
+             </bean>
+            例<bean id="setDi" class="com.Iven.SetDI.SetDi"  autowire="byType">
+
+    -->
+    <!--
+            引用类型的自动注入： spring框架根据某些规则可以给引用类型赋值。·不用你在给引用类型赋值了
+       使用的规则常用的是byName, byType.
+       1.byName(按名称注入) ： java类中引用类型的属性名和spring容器中（配置文件）<bean>的id名称一样，
+                              且数据类型是一致的，这样的容器中的bean，spring能够赋值给引用类型。
+         语法：
+         <bean id="xx" class="yyy" autowire="byName">
+            简单类型属性赋值
+         </bean>
+
+       2.byType(按类型注入) ： java类中引用类型的数据类型和spring容器中（配置文件）<bean>的class属性
+                              是同源关系的，这样的bean能够赋值给引用类型
+         同源就是一类的意思：
+          1.java类中引用类型的数据类型和bean的class的值是一样的。
+          2.java类中引用类型的数据类型和bean的class的值父子类关系的。
+          3.java类中引用类型的数据类型和bean的class的值接口和实现类关系的
+         语法：
+         <bean id="xx" class="yyy" autowire="byType">
+            简单类型属性赋值
+         </bean>
+    -->
+    <!--使用name属性实现构造注入-->
+    <bean id="setDi" class="com.Iven.SetDI.SetDi" >
+        <constructor-arg name="name" value="Iven" />
+        <constructor-arg name="age" value="22" />
+        <constructor-arg name="school" ref="myS"/>
+    </bean>
+    <!--声明School对象-->
+    <bean id="myS" class="com.Iven.SetDI.School">
+        <property name="name" value="清华大学"/>
+        <property name="address" value="北京的海淀区" />
+    </bean>
+
+</beans>
+ <!--
+   spring的配置文件
+   1.beans : 是根标签，spring把java对象成为bean。
+   2.spring-beans.xsd 是约束文件，和mybatis指定  dtd是一样的。
+ -->
